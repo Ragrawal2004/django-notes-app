@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apps-ingress
+  namespace: ingress-lab
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: [apps.127.0.0.1.nip.io]
+      secretName: apps-tls
+  rules:
+    - host: apps.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /blue
+            pathType: Prefix
+            backend:
+              service:
+                name: blue
+                port:
+                  number: 80
+          - path: /green
+            pathType: Prefix
+            backend:
+              service:
+                name: green
+                port:
+                  number: 80

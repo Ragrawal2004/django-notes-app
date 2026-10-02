@@ -1,0 +1,14 @@
+namespace: notes-app
+
+image:
+  repository: notes-app
+  tag: v1
+  pullPolicy: IfNotPresent
+
+replicaCount: 2
+
+db:
+  name: test_db
+  user: root
+  rootPassword: rootpass123
+  storage: 1Gi
