@@ -1,0 +1,32 @@
+name: Build and Deploy Notes App
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set image tag from commit SHA
+        run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: docker build -t notes-app:${{ env.IMAGE_TAG }} .
+
+      - name: Load image into Kind
+        run: kind load docker-image notes-app:${{ env.IMAGE_TAG }} --name local-cluster
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade notes ./notes-chart \
+            -n notes-app --create-namespace \
+            --set image.tag=${{ env.IMAGE_TAG }} \
+            --wait --timeout 3m
+
+      - name: Verify rollout
+        run: kubectl get pods -n notes-app
