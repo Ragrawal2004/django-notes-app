@@ -23,7 +23,7 @@ jobs:
 
       - name: Deploy with Helm
         run: |
-          helm upgrade notes ./notes-chart \
+          helm upgrade --install notes ./notes-chart \
             -n notes-app --create-namespace \
             --set image.tag=${{ env.IMAGE_TAG }} \
             --wait --timeout 3m
